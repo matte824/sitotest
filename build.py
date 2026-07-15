@@ -462,16 +462,16 @@ pages["metodo.html"] = head(
             <div role="columnheader" class="compare__ours">Approccio strategico</div>
           </div>
           <div class="compare__row" role="row">
-            <div role="cell">Parte dal prodotto da proporre</div>
-            <div role="cell" class="compare__ours">Parte dall'analisi dei tuoi obiettivi</div>
+            <div role="cell" data-label="Approccio tradizionale">Parte dal prodotto da proporre</div>
+            <div role="cell" class="compare__ours" data-label="Approccio strategico"><span class="compare__arrow" aria-hidden="true">→</span>Parte dall'analisi dei tuoi obiettivi</div>
           </div>
           <div class="compare__row" role="row">
-            <div role="cell">Costi poco visibili e frammentati</div>
-            <div role="cell" class="compare__ours">Costi dichiarati e documentati</div>
+            <div role="cell" data-label="Approccio tradizionale">Costi poco visibili e frammentati</div>
+            <div role="cell" class="compare__ours" data-label="Approccio strategico"><span class="compare__arrow" aria-hidden="true">→</span>Costi dichiarati e documentati</div>
           </div>
           <div class="compare__row" role="row">
-            <div role="cell">Portafoglio come somma di prodotti</div>
-            <div role="cell" class="compare__ours">Patrimonio come progetto unitario</div>
+            <div role="cell" data-label="Approccio tradizionale">Portafoglio come somma di prodotti</div>
+            <div role="cell" class="compare__ours" data-label="Approccio strategico"><span class="compare__arrow" aria-hidden="true">→</span>Patrimonio come progetto unitario</div>
           </div>
         </div>
       </div>

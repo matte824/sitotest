@@ -472,7 +472,7 @@ body::after {
 .compare__row:last-child { border-bottom: 0; }
 .compare__row > div { padding: 1.5rem 2rem; font-size: 0.98rem; color: var(--ivory-dim); }
 .compare__row .compare__ours { background: var(--brass-soft); color: var(--ivory); border-left: 1px solid var(--line); position: relative; padding-left: 3rem; }
-.compare__row:not(.compare__row--head) .compare__ours::before { content: "→"; position: absolute; left: 1.5rem; color: var(--brass-hi); }
+.compare__arrow { position: absolute; left: 1.5rem; color: var(--brass-hi); }
 .compare__row--head > div { font-family: var(--font-display); font-size: 1.1rem; font-weight: 500; color: var(--ivory); }
 .compare__row--head .compare__ours { color: var(--brass-hi); }
 
@@ -688,9 +688,40 @@ body::after {
   .method__step::after { font-size: 3.2rem; top: 1.1rem; right: 1.1rem; }
   .offer { grid-template-columns: 1fr; padding: 2rem 1.6rem; }
 
-  .compare__row { grid-template-columns: 1fr; }
-  .compare__row > div:first-child { border-bottom: 1px dashed var(--line); }
-  .compare__row .compare__ours { border-left: 0; }
+  /* Su mobile la tabella diventa una serie di card di confronto:
+     ogni riga mostra la coppia con l'etichetta della colonna esplicita */
+  .compare__table { border: 0; border-radius: 0; display: grid; gap: 1.1rem; }
+  .compare__row--head { display: none; }
+  .compare__row {
+    grid-template-columns: 1fr;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--ink-3);
+  }
+  .compare__row > div {
+    padding: 1.25rem 1.4rem;
+    position: relative;
+  }
+  .compare__row > div::before {
+    content: attr(data-label);
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ivory-dim);
+    margin-bottom: 0.45rem;
+    position: static;
+  }
+  .compare__row > div:first-child { border-bottom: 1px solid var(--line); }
+  .compare__row .compare__ours {
+    border-left: 0;
+    padding-left: 1.4rem;
+    background: var(--brass-soft);
+  }
+  .compare__arrow { position: static; margin-right: 0.5rem; }
 
   .footer__inner { grid-template-columns: 1fr; gap: 2.2rem; }
   .contact__form { padding: 1.6rem; }
