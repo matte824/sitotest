@@ -14,20 +14,26 @@
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 
+  const setMenu = (open) => {
+    navLinks.classList.toggle("is-open", open);
+    navToggle.classList.toggle("is-open", open);
+    nav.classList.toggle("menu-open", open);
+    document.body.classList.toggle("menu-open", open);
+    navToggle.setAttribute("aria-expanded", String(open));
+    navToggle.setAttribute("aria-label", open ? "Chiudi menu" : "Apri menu");
+  };
+
   if (navToggle) {
-    navToggle.addEventListener("click", () => {
-      const open = navLinks.classList.toggle("is-open");
-      navToggle.classList.toggle("is-open", open);
-      navToggle.setAttribute("aria-expanded", open);
-      document.body.style.overflow = open ? "hidden" : "";
+    navToggle.addEventListener("click", () => setMenu(!navLinks.classList.contains("is-open")));
+    navLinks.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setMenu(false)));
+    // Chiusura con ESC (tastiere fisiche / accessibilità)
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && navLinks.classList.contains("is-open")) setMenu(false);
     });
-    navLinks.querySelectorAll("a").forEach((a) =>
-      a.addEventListener("click", () => {
-        navLinks.classList.remove("is-open");
-        navToggle.classList.remove("is-open");
-        document.body.style.overflow = "";
-      })
-    );
+    // Se si passa a viewport desktop con il menu aperto, ripulisco lo stato
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 720 && navLinks.classList.contains("is-open")) setMenu(false);
+    });
   }
 
   // Evidenzia la voce di menu della pagina corrente
@@ -55,89 +61,150 @@
     revealEls.forEach((el) => el.classList.add("is-visible"));
   }
 
-  /* ---------- 3. CANVAS HERO: costellazione con interazione mouse ---------- */
+  /* ==========================================================================
+     3. HERO: "La Rotta" — dal patrimonio frammentato a una direzione consapevole
+     Narrazione automatica (~5s): punti dispersi -> traiettorie che si disegnano
+     in sequenza -> equilibrio, con impulso dorato lungo la rotta e CTA illuminata.
+     Lo scroll dentro la hero accelera la convergenza (nessun blocco dello scroll);
+     il mouse esercita solo una lieve attrazione magnetica.
+     ========================================================================== */
   const canvas = document.getElementById("heroCanvas");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  if (canvas && !reduceMotion) {
+  if (canvas) {
     const ctx = canvas.getContext("2d");
-    let w, h, nodes, raf;
+    const hero = canvas.closest(".hero");
     const DPR = Math.min(window.devicePixelRatio || 1, 2);
+    const DURATION = 5200;
     const mouse = { x: -9999, y: -9999 };
+    let w, h, dust, route, raf, start = null, scrollBoost = 0;
 
-    const resize = () => {
+    const ease = (t) => 1 - Math.pow(1 - t, 3);
+
+    // Rotta: curva di Bezier che converge verso l'area della CTA
+    const curvePoint = (t) => {
+      const endX = w < 720 ? 0.44 : 0.34;
+      const P0 = { x: w * 0.90, y: h * 0.16 };
+      const P1 = { x: w * 0.74, y: h * 0.64 };
+      const P2 = { x: w * 0.54, y: h * 0.28 };
+      const P3 = { x: w * endX, y: h * 0.76 };
+      const u = 1 - t;
+      return {
+        x: u * u * u * P0.x + 3 * u * u * t * P1.x + 3 * u * t * t * P2.x + t * t * t * P3.x,
+        y: u * u * u * P0.y + 3 * u * u * t * P1.y + 3 * u * t * t * P2.y + t * t * t * P3.y,
+      };
+    };
+
+    const build = () => {
       w = canvas.offsetWidth;
       h = canvas.offsetHeight;
       canvas.width = w * DPR;
       canvas.height = h * DPR;
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      initNodes();
-    };
 
-    const initNodes = () => {
-      const count = Math.min(Math.floor((w * h) / 14000), 110);
-      nodes = Array.from({ length: count }, () => ({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.32,
-        vy: (Math.random() - 0.5) * 0.32,
-        r: Math.random() * 1.7 + 0.7,
+      const dustCount = Math.min(Math.floor((w * h) / 26000), 55);
+      dust = Array.from({ length: dustCount }, () => ({
+        x: Math.random() * w, y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.08, vy: (Math.random() - 0.5) * 0.08,
+        r: Math.random() * 1.3 + 0.5,
+        a: Math.random() * 0.22 + 0.14,
       }));
+
+      const K = 9;
+      route = Array.from({ length: K }, (_, i) => {
+        const target = curvePoint(i / (K - 1));
+        return {
+          sx: Math.random() * w, sy: Math.random() * h,
+          tx: target.x, ty: target.y,
+          delay: 0.14 + (i / (K - 1)) * 0.34, // i nodi si ordinano in sequenza lungo la rotta
+        };
+      });
     };
 
-    const LINK = 150;
-    const MOUSE_LINK = 210;
+    // Attrazione magnetica lieve verso il cursore (pochi pixel, mai vistosa)
+    const attract = (px, py, maxPull) => {
+      const dx = mouse.x - px, dy = mouse.y - py;
+      const d = Math.hypot(dx, dy);
+      const R = 240;
+      if (d > R || d === 0) return { x: px, y: py };
+      const f = (1 - d / R) * maxPull;
+      return { x: px + (dx / d) * f, y: py + (dy / d) * f };
+    };
 
-    const draw = () => {
+    const render = (p, now) => {
       ctx.clearRect(0, 0, w, h);
 
-      for (let i = 0; i < nodes.length; i++) {
-        const n = nodes[i];
-        n.x += n.vx;
-        n.y += n.vy;
-        if (n.x < 0 || n.x > w) n.vx *= -1;
-        if (n.y < 0 || n.y > h) n.vy *= -1;
-
-        // Linee tra nodi vicini (oro, ben visibili)
-        for (let j = i + 1; j < nodes.length; j++) {
-          const m = nodes[j];
-          const dist = Math.hypot(n.x - m.x, n.y - m.y);
-          if (dist < LINK) {
-            const alpha = (1 - dist / LINK) * 0.28;
-            ctx.strokeStyle = `rgba(200, 169, 110, ${alpha})`;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(n.x, n.y);
-            ctx.lineTo(m.x, m.y);
-            ctx.stroke();
-          }
-        }
-
-        // Connessione luminosa verso il cursore
-        const md = Math.hypot(n.x - mouse.x, n.y - mouse.y);
-        if (md < MOUSE_LINK) {
-          const alpha = (1 - md / MOUSE_LINK) * 0.5;
-          ctx.strokeStyle = `rgba(227, 201, 143, ${alpha})`;
-          ctx.lineWidth = 1.1;
-          ctx.beginPath();
-          ctx.moveTo(n.x, n.y);
-          ctx.lineTo(mouse.x, mouse.y);
-          ctx.stroke();
-        }
-
-        // Nodo con leggero glow
-        ctx.fillStyle = "rgba(242, 239, 233, 0.55)";
-        ctx.shadowColor = "rgba(200, 169, 110, 0.8)";
-        ctx.shadowBlur = 6;
+      // Primo momento: polvere dispersa, quasi immobile
+      for (const d of dust) {
+        d.x += d.vx; d.y += d.vy;
+        if (d.x < 0 || d.x > w) d.vx *= -1;
+        if (d.y < 0 || d.y > h) d.vy *= -1;
+        const pos = attract(d.x, d.y, 6);
+        ctx.fillStyle = "rgba(242,239,233," + d.a + ")";
         ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx.arc(pos.x, pos.y, d.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Nodi della rotta: dai punti dispersi alle posizioni ordinate
+      const pts = route.map((n) => {
+        const lp = Math.min(Math.max((p - n.delay) / 0.4, 0), 1);
+        const e = ease(lp);
+        const base = { x: n.sx + (n.tx - n.sx) * e, y: n.sy + (n.ty - n.sy) * e };
+        const q = attract(base.x, base.y, 3);
+        return { x: q.x, y: q.y, settled: lp };
+      });
+
+      // Le traiettorie emergono: ogni segmento si disegna in sequenza
+      for (let i = 0; i < pts.length - 1; i++) {
+        const segStart = 0.32 + (i / (pts.length - 1)) * 0.40;
+        const sp = Math.min(Math.max((p - segStart) / 0.14, 0), 1);
+        if (sp <= 0) continue;
+        const a = pts[i], b = pts[i + 1];
+        const alpha = (0.16 + 0.30 * Math.min(p * 1.2, 1)) * sp;
+        ctx.strokeStyle = "rgba(200,169,110," + alpha + ")";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(a.x + (b.x - a.x) * sp, a.y + (b.y - a.y) * sp);
+        ctx.stroke();
+      }
+
+      // Nodi
+      for (const q of pts) {
+        ctx.fillStyle = "rgba(242,239,233," + (0.30 + 0.50 * q.settled) + ")";
+        ctx.shadowColor = "rgba(200,169,110,0.8)";
+        ctx.shadowBlur = 3 + 6 * q.settled;
+        ctx.beginPath();
+        ctx.arc(q.x, q.y, 1.6 + 1.3 * q.settled, 0, Math.PI * 2);
         ctx.fill();
         ctx.shadowBlur = 0;
       }
+
+      // Equilibrio: un impulso di luce percorre la rotta e la CTA si accende
+      if (p > 0.92) {
+        if (now !== null) {
+          const t = (now / 2600) % 1;
+          const gp = curvePoint(t);
+          const grad = ctx.createRadialGradient(gp.x, gp.y, 0, gp.x, gp.y, 26);
+          grad.addColorStop(0, "rgba(227,201,143,0.45)");
+          grad.addColorStop(1, "rgba(227,201,143,0)");
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(gp.x, gp.y, 26, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        hero.classList.add("is-lit");
+      }
+    };
+
+    const draw = (now) => {
+      if (start === null) start = now;
+      const p = Math.min(ease(Math.min((now - start) / DURATION, 1)) + scrollBoost, 1);
+      render(p, now);
       raf = requestAnimationFrame(draw);
     };
 
-    const hero = canvas.closest(".hero");
     hero.addEventListener("pointermove", (e) => {
       const rect = canvas.getBoundingClientRect();
       mouse.x = e.clientX - rect.left;
@@ -145,15 +212,24 @@
     });
     hero.addEventListener("pointerleave", () => { mouse.x = -9999; mouse.y = -9999; });
 
-    // Anima solo quando visibile (batteria mobile)
-    const heroObserver = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) raf = requestAnimationFrame(draw);
-      else cancelAnimationFrame(raf);
-    });
+    build();
 
-    resize();
-    heroObserver.observe(canvas);
-    window.addEventListener("resize", resize);
+    if (reduceMotion) {
+      // Accessibilita': stato finale statico, senza animazione
+      render(1, null);
+    } else {
+      // Lo scroll dentro la hero accelera la convergenza (senza mai bloccarla)
+      window.addEventListener("scroll", () => {
+        scrollBoost = Math.min(window.scrollY / (h * 0.9), 1) * 0.18;
+      }, { passive: true });
+
+      const heroObserver = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) raf = requestAnimationFrame(draw);
+        else cancelAnimationFrame(raf);
+      });
+      heroObserver.observe(canvas);
+      window.addEventListener("resize", build);
+    }
   }
 
   /* ---------- 4. CONTATORI ---------- */

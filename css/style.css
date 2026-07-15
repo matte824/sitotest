@@ -103,13 +103,24 @@ body::after {
    ========================================================================== */
 .nav { position: fixed; inset: 0 0 auto 0; z-index: 100; border-bottom: 1px solid transparent;
   transition: background 0.4s, backdrop-filter 0.4s, border-color 0.4s; }
-.nav.is-scrolled {
+.nav::before {
+  content: "";
+  position: absolute; inset: 0;
   background: rgba(10, 13, 16, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom-color: var(--line);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+  z-index: -1;
 }
+.nav.is-scrolled::before { opacity: 1; }
+.nav.is-scrolled { border-bottom-color: var(--line); }
+/* Mentre il menu mobile è aperto, la barra non deve sovrapporre alcun velo */
+.nav.menu-open::before { opacity: 0; }
 .nav__inner {
+  position: relative;
+  z-index: 2;
   width: min(var(--container), 92%);
   margin-inline: auto;
   display: flex; align-items: center; gap: 2rem;
@@ -142,26 +153,16 @@ body::after {
   min-height: 100svh;
   display: flex; align-items: center;
   overflow: hidden;
-  background: var(--ink);
+  background:
+    radial-gradient(ellipse 85% 70% at 72% 12%, rgba(46, 70, 110, 0.30), transparent 62%),
+    linear-gradient(180deg, #0A1424 0%, #0A1120 55%, var(--ink) 100%);
 }
-/* Aurora: bagliori lenti in movimento dietro al canvas */
-.hero__aurora { position: absolute; inset: 0; overflow: hidden; }
-.hero__aurora span {
-  position: absolute;
-  width: 60vw; height: 60vw;
-  border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.35;
-  animation: aurora 26s ease-in-out infinite alternate;
+/* Finale: la rotta in equilibrio illumina delicatamente la CTA */
+.hero__cta .btn--primary { transition: transform 0.35s var(--ease), box-shadow 0.9s var(--ease), background 0.35s; }
+.hero.is-lit .hero__cta .btn--primary {
+  box-shadow: 0 0 0 1px rgba(227, 201, 143, 0.55), 0 14px 48px rgba(200, 169, 110, 0.4);
 }
-.hero__aurora span:nth-child(1) { background: radial-gradient(circle, rgba(200,169,110,0.35), transparent 65%); top: -25%; right: -12%; }
-.hero__aurora span:nth-child(2) { background: radial-gradient(circle, rgba(120,140,180,0.20), transparent 65%); bottom: -30%; left: -15%; animation-delay: -9s; animation-duration: 32s; }
-.hero__aurora span:nth-child(3) { background: radial-gradient(circle, rgba(200,169,110,0.16), transparent 60%); top: 30%; left: 30%; animation-delay: -18s; animation-duration: 38s; }
-@keyframes aurora {
-  0%   { transform: translate(0, 0) scale(1); }
-  50%  { transform: translate(-6%, 5%) scale(1.12); }
-  100% { transform: translate(5%, -6%) scale(0.95); }
-}
+.hero.is-lit .hero__cta .btn--ghost { border-color: rgba(200, 169, 110, 0.7); }
 .hero__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 .hero__content { position: relative; z-index: 2; padding: 9rem 0 6rem; }
 .hero__eyebrow {
@@ -620,18 +621,51 @@ body::after {
   .hero__content { padding: 8rem 0 5rem; }
   .page-hero { padding: 8.5rem 0 3.5rem; }
 
+
+  /* Overlay a tutto schermo: fondo pieno (niente trasparenze che lasciano
+     leggere il contenuto sotto) e z-index sopra la barra */
   .nav__links {
-    position: fixed; inset: 0;
-    background: rgba(10,13,16,0.97);
-    backdrop-filter: blur(16px);
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100dvh;
+    background: #070A0D;
     flex-direction: column; align-items: center; justify-content: center;
-    gap: 2.2rem;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.35s;
+    gap: 0;
+    padding: 5.5rem 1.5rem 2.5rem;
+    z-index: 105;
+    opacity: 0; visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.35s var(--ease), visibility 0s linear 0.35s;
+    overflow-y: auto;
   }
-  .nav__links.is-open { opacity: 1; pointer-events: auto; }
-  .nav__links a { font-size: 1.25rem; }
-  .nav__toggle { display: flex; z-index: 110; }
+  .nav__links.is-open {
+    opacity: 1; visibility: visible;
+    pointer-events: auto;
+    transition: opacity 0.35s var(--ease), visibility 0s;
+  }
+  .nav__links a {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--ivory);
+    padding: 1.05rem 0;
+    border-bottom: 0;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+  }
+  .nav__links a + a { border-top: 1px solid var(--line); }
+  .nav__links a.is-active { color: var(--brass-hi); border-bottom: 0; }
+  /* CTA sempre raggiungibile dentro il menu aperto */
+  .nav__links::after {
+    content: "";
+    display: block; width: 60px; height: 1px;
+    background: var(--brass);
+    margin-top: 1.8rem;
+  }
+  .nav__toggle { display: flex; z-index: 110; position: relative; }
+  /* Blocco lo scroll della pagina retrostante mentre il menu è aperto */
+  body.menu-open { overflow: hidden; }
   .btn--nav { display: none; }
   .nav__logo img { height: 36px; }
 
