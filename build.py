@@ -20,6 +20,11 @@ def head(title, desc, canonical):
   <meta name="description" content="{desc}">
   <meta name="author" content="Matteo Notario">
   <link rel="canonical" href="https://www.tuodominio.it/{canonical}">
+  <meta name="theme-color" content="#0A0D10">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <link rel="preload" href="fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/instrumentsans-normal.woff2" as="font" type="font/woff2" crossorigin>
   <meta property="og:type" content="website">
   <meta property="og:title" content="{title}">
   <meta property="og:description" content="{desc}">
@@ -44,6 +49,7 @@ NAV = f'''  <header class="nav" id="nav">
         <a href="quando-intervengo.html">Quando intervengo</a>
         <a href="per-le-imprese.html">Per le imprese</a>
         <a href="articoli.html">Articoli</a>
+        <a href="domande-frequenti.html">Domande frequenti</a>
       </nav>
       <a href="contatti.html" class="btn btn--nav">Contattami</a>
       <button class="nav__toggle" id="navToggle" aria-label="Apri menu" aria-expanded="false">
@@ -70,7 +76,9 @@ FOOTER = f'''  <footer class="footer">
         <a href="metodo.html">Il metodo</a>
         <a href="quando-intervengo.html">Quando intervengo</a>
         <a href="articoli.html">Articoli</a>
-        <a href="privacy.html">Privacy &amp; Cookie</a>
+        <a href="domande-frequenti.html">Domande frequenti</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="cookie-policy.html">Cookie Policy</a>
       </div>
     </div>
     <div class="container footer__legal">
@@ -225,81 +233,25 @@ pages["index.html"] = head(
       </div>
     </section>
 
-    <section class="section">
+    <section class="explore">
       <div class="container">
-        <p class="section__eyebrow reveal">Il metodo</p>
-        <h2 class="section__title reveal">Decidere con metodo,<br>non per abitudine.</h2>
-        <p class="section__intro reveal">
-          Per anni ho lavorato come consulente strategico per grandi multinazionali.
-          Il mio obiettivo è portare quel metodo nella consulenza finanziaria, attraverso 4 step.
-        </p>
-        <div class="method__steps">
-          <article class="method__step reveal" data-n="01">
-            <span class="method__node" aria-hidden="true"></span>
-            <div class="method__phase">Fase 01</div>
-            <h3>Diagnosi</h3>
-            <p>Capire dove sei: patrimonio, obiettivi, orizzonte, fiscalità, rischi.</p>
-          </article>
-          <article class="method__step reveal" data-n="02">
-            <span class="method__node" aria-hidden="true"></span>
-            <div class="method__phase">Fase 02</div>
-            <h3>Strategia</h3>
-            <p>Un progetto scritto, con priorità, alternative e scenari.</p>
-          </article>
-          <article class="method__step reveal" data-n="03">
-            <span class="method__node" aria-hidden="true"></span>
-            <div class="method__phase">Fase 03</div>
-            <h3>Esecuzione</h3>
-            <p>Strumenti efficienti e trasparenti, al servizio del progetto.</p>
-          </article>
-          <article class="method__step reveal" data-n="04">
-            <span class="method__node" aria-hidden="true"></span>
-            <div class="method__phase">Fase 04</div>
-            <h3>Governance</h3>
-            <p>Monitoraggio continuo e revisioni a ogni cambio di scenario.</p>
-          </article>
-        </div>
-        <div class="teaser__link reveal">
-          <a href="metodo.html" class="arrow-link">Approfondisci il metodo e le differenze</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="cases section">
-      <div class="container">
-        <p class="section__eyebrow reveal">Quando intervengo</p>
-        <h2 class="section__title reveal">I momenti in cui una decisione<br>sbagliata costa più cara.</h2>
-        <div class="cases__grid">
-          <article class="cases__card reveal">
-            <h3>Vuoi pianificare il tuo patrimonio</h3>
-            <p>Dalla protezione della famiglia alla pensione, dal fisco al passaggio generazionale: un progetto unico, non prodotti scollegati.</p>
-          </article>
-          <article class="cases__card reveal">
-            <h3>Vuoi rendimenti — con metodo</h3>
-            <p>Non promesse di performance: portafogli efficienti, costi sotto controllo e disciplina in ogni fase di mercato.</p>
-          </article>
-          <article class="cases__card reveal">
-            <h3>Hai ricevuto un'eredità</h3>
-            <p>Un capitale importante e la responsabilità di non disperderlo: trasformiamolo in un progetto, non in scelte improvvisate.</p>
-          </article>
-        </div>
-        <div class="teaser__link reveal">
-          <a href="quando-intervengo.html" class="arrow-link">Vedi tutte le situazioni in cui posso aiutarti</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <p class="section__eyebrow reveal">Per le imprese</p>
-        <h2 class="section__title reveal">Finanza, previdenza, formazione:<br>tre leve, un unico interlocutore.</h2>
-        <p class="section__intro reveal">
-          Supporto imprenditori e PMI su tre fronti: la pianificazione finanziaria dell'impresa
-          — liquidità, protezione, continuità —, la previdenza aziendale, dal TFM degli
-          amministratori al TFR dei dipendenti, e la formazione finanziaria in azienda.
-        </p>
-        <div class="teaser__link reveal">
-          <a href="per-le-imprese.html" class="arrow-link">Scopri i servizi per le imprese</a>
+        <div class="explore__grid reveal">
+          <a class="explore__item" href="chi-sono.html">
+            <span class="explore__label">Chi sono</span>
+            <span class="explore__desc">Dalla strategia d'impresa a quella patrimoniale</span>
+          </a>
+          <a class="explore__item" href="metodo.html">
+            <span class="explore__label">Il metodo</span>
+            <span class="explore__desc">Quattro fasi, dalla diagnosi alla governance</span>
+          </a>
+          <a class="explore__item" href="quando-intervengo.html">
+            <span class="explore__label">Quando intervengo</span>
+            <span class="explore__desc">I momenti in cui le decisioni contano di più</span>
+          </a>
+          <a class="explore__item" href="per-le-imprese.html">
+            <span class="explore__label">Per le imprese</span>
+            <span class="explore__desc">Finanza, previdenza e formazione</span>
+          </a>
         </div>
       </div>
     </section>
@@ -329,10 +281,10 @@ pages["chi-sono.html"] = head(
 
     <section class="section">
       <div class="container">
-        <p class="section-lead reveal">
-          Dalla mia esperienza nasce il mio modo di lavorare: poche promesse,
-          molta chiarezza e un metodo documentato.
-        </p>
+        <div class="keyline reveal">
+          <span class="keyline__label">Il mio approccio</span>
+          <p>Dalla mia esperienza nasce il mio modo di lavorare: poche promesse, molta chiarezza e <span class="accent">un metodo documentato</span>.</p>
+        </div>
       </div>
       <div class="container about__inner">
         <div class="about__photo reveal">
@@ -411,10 +363,10 @@ pages["metodo.html"] = head(
 
     <section class="section">
       <div class="container">
-        <p class="section-lead reveal">
-          Dal primo confronto al monitoraggio nel tempo: ogni fase ha un obiettivo preciso,
-          un metodo di lavoro e un risultato concreto.
-        </p>
+        <div class="keyline reveal">
+          <span class="keyline__label">Il percorso</span>
+          <p>Dal primo confronto al monitoraggio nel tempo: ogni fase ha un obiettivo preciso, un metodo di lavoro e <span class="accent">un risultato concreto</span>.</p>
+        </div>
         <div class="method__steps">
           <article class="method__step reveal" data-n="01">
             <span class="method__node" aria-hidden="true"></span>
@@ -474,6 +426,10 @@ pages["metodo.html"] = head(
             <div role="cell" data-label="Approccio tradizionale">Portafoglio come somma di prodotti</div>
             <div role="cell" class="compare__ours" data-label="Approccio strategico"><span class="compare__arrow" aria-hidden="true">→</span>Patrimonio come progetto unitario</div>
           </div>
+          <div class="compare__row" role="row">
+            <div role="cell" data-label="Approccio tradizionale">Consulente remunerato dal prodotto/banca</div>
+            <div role="cell" class="compare__ours" data-label="Approccio strategico"><span class="compare__arrow" aria-hidden="true">→</span>Consulente remunerato dal cliente (Fee Only)</div>
+          </div>
         </div>
       </div>
     </section>
@@ -505,11 +461,10 @@ pages["quando-intervengo.html"] = head(
 
     <section class="cases section">
       <div class="container">
-        <p class="section-lead reveal">
-          Alcune decisioni patrimoniali non sono solo finanziarie: arrivano quando cambia
-          una fase della vita, dell'impresa o della famiglia. In quei momenti serve metodo,
-          ma anche una guida capace di mettere ordine.
-        </p>
+        <div class="keyline reveal">
+          <span class="keyline__label">Perché conta</span>
+          <p>Alcune decisioni patrimoniali non sono solo finanziarie: arrivano quando cambia una fase della vita, dell'impresa o della famiglia. In quei momenti serve <span class="accent">metodo</span>, ma anche <span class="accent">una guida capace di mettere ordine</span>.</p>
+        </div>
         <div class="cases__grid">
           <article class="cases__card reveal">
             <h3>Vuoi pianificare il tuo patrimonio</h3>
@@ -911,27 +866,27 @@ pages["contatti.html"] = head(
           </div>
           <div class="form__row">
             <div class="form__group">
-              <label for="telefono">Telefono</label>
-              <input type="tel" id="telefono" name="telefono" autocomplete="tel">
+              <label for="telefono">Telefono *</label>
+              <input type="tel" id="telefono" name="telefono" required autocomplete="tel">
             </div>
             <div class="form__group">
-              <label for="situazione">La tua situazione *</label>
-              <select id="situazione" name="situazione" required>
+              <label for="motivo">Come posso esserti utile? *</label>
+              <select id="motivo" name="motivo" required>
                 <option value="" disabled selected>Seleziona…</option>
-                <option>Voglio pianificare il mio patrimonio</option>
-                <option>Cerco rendimenti con metodo</option>
-                <option>Voglio una diagnosi gratuita del mio portafoglio</option>
-                <option>Ho ricevuto un'eredità</option>
-                <option>Ho venduto un'azienda</option>
-                <option>Ho concluso un'operazione immobiliare</option>
-                <option>Sono un'azienda (finanza, previdenza, formazione)</option>
-                <option>Altro</option>
+                <option>Vorrei ricevere maggiori informazioni sui tuoi servizi</option>
+                <option>Vorrei prenotare un appuntamento</option>
+                <option>Vorrei richiedere una diagnosi sul mio attuale portafoglio</option>
+                <option value="Altro">Altro</option>
               </select>
             </div>
           </div>
+          <div class="form__group" id="altroWrap" hidden>
+            <label for="altro">Specifica l'argomento *</label>
+            <input type="text" id="altro" name="altro" autocomplete="off">
+          </div>
           <div class="form__group">
-            <label for="messaggio">Cosa vorresti approfondire?</label>
-            <textarea id="messaggio" name="messaggio" rows="4"></textarea>
+            <label for="messaggio">Cosa vorresti approfondire? *</label>
+            <textarea id="messaggio" name="messaggio" rows="4" required></textarea>
           </div>
           <label class="form__privacy">
             <input type="checkbox" name="privacy" required>
@@ -966,7 +921,7 @@ pages["contatti.html"] = head(
           </details>
           <details class="faq__item">
             <summary>Come vengono remunerati i servizi?<span class="faq__icon">+</span></summary>
-            <p>L'incontro conoscitivo e la diagnosi iniziale sono gratuiti. Per gli eventuali servizi successivi, modalità di remunerazione e costi vengono illustrati e definiti con trasparenza prima di iniziare.</p>
+            <p>La mia remunerazione è trasparente e viene concordata prima dell'inizio della consulenza (Fee Only). Questo significa che il mio interesse è quello di aiutarti a prendere decisioni d'investimento coerenti con i tuoi obiettivi, non quello di promuovere uno specifico prodotto finanziario. Costruisco strategie personalizzate selezionando gli strumenti che ritengo più adatti al tuo caso ed eliminando i tradizionali conflitti di interesse.</p>
           </details>
           <details class="faq__item">
             <summary>Ho un patrimonio contenuto: ha comunque senso rivolgersi a un consulente?<span class="faq__icon">+</span></summary>
@@ -1029,7 +984,7 @@ pages["contatti.html"] = head(
       "name": "Come vengono remunerati i servizi?",
       "acceptedAnswer": {{
         "@type": "Answer",
-        "text": "L'incontro conoscitivo e la diagnosi iniziale sono gratuiti. Per gli eventuali servizi successivi, modalità di remunerazione e costi vengono illustrati e definiti con trasparenza prima di iniziare."
+        "text": "La mia remunerazione è trasparente e viene concordata prima dell'inizio della consulenza (Fee Only). Questo significa che il mio interesse è quello di aiutarti a prendere decisioni d'investimento coerenti con i tuoi obiettivi, non quello di promuovere uno specifico prodotto finanziario. Costruisco strategie personalizzate selezionando gli strumenti che ritengo più adatti al tuo caso ed eliminando i tradizionali conflitti di interesse."
       }}
     }},
     {{
@@ -1080,21 +1035,82 @@ pages["privacy.html"] = head(
     <section class="page-hero">
       <div class="container">
         <p class="page-hero__eyebrow reveal">Note legali</p>
-        <h1 class="reveal d1">Privacy &amp; Cookie Policy</h1>
+        <h1 class="reveal d1">Privacy Policy</h1>
       </div>
     </section>
     <section class="container article-body">
-      <p><strong>DA VALIDARE PRIMA DEL GO-LIVE</strong> con un consulente privacy/DPO: struttura di base, non un testo definitivo.</p>
+      <p><strong>DA VALIDARE PRIMA DEL GO-LIVE.</strong> Bozza di struttura: il testo definitivo sarà generato con iubenda (o validato da un consulente privacy) e incollato in questa pagina.</p>
       <h2>Titolare del trattamento</h2>
-      <p>Matteo Notario — [indirizzo], P.IVA [XXXXXXXXXXX] — email: {EMAIL}</p>
+      <p>Matteo Notario — [indirizzo], P.IVA 13202740018 — email: {EMAIL}</p>
       <h2>Dati raccolti e finalità</h2>
-      <p>Tramite il modulo di contatto: nome, email, telefono (facoltativo), descrizione della situazione. Base giuridica: consenso (art. 6.1.a GDPR). Finalità: ricontattare l'interessato. Nessun uso di marketing senza consenso specifico.</p>
+      <p>Tramite il modulo di contatto: nome, email, telefono, motivo del contatto e messaggio. Base giuridica: consenso (art. 6.1.a GDPR). Finalità: ricontattare l'interessato. Nessun uso di marketing senza consenso specifico. I dati sono trattati dal server di hosting senza servizi terzi.</p>
       <h2>Conservazione e diritti</h2>
-      <p>I dati sono conservati per il tempo necessario a gestire la richiesta. Diritti ex artt. 15-22 GDPR esercitabili scrivendo a {EMAIL}.</p>
-      <h2 id="cookie">Cookie</h2>
-      <p>Questo sito non utilizza cookie di profilazione. [Aggiornare se verranno installati strumenti di analytics: in tal caso è necessario un banner cookie conforme.]</p>
+      <p>I dati sono conservati per il tempo necessario a gestire la richiesta. Diritti ex artt. 15-22 GDPR esercitabili scrivendo a {EMAIL}. È riconosciuto il diritto di reclamo al Garante per la protezione dei dati personali.</p>
     </section>
   </main>
+''' + FOOTER
+
+pages["cookie-policy.html"] = head(
+    "Cookie Policy — Matteo Notario",
+    "Informativa sull'utilizzo dei cookie.",
+    "cookie-policy.html"
+) + NAV + f'''
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <p class="page-hero__eyebrow reveal">Note legali</p>
+        <h1 class="reveal d1">Cookie Policy</h1>
+      </div>
+    </section>
+    <section class="container article-body">
+      <p><strong>DA VALIDARE PRIMA DEL GO-LIVE.</strong> Bozza di struttura: il testo definitivo sarà generato con iubenda e incollato in questa pagina.</p>
+      <h2>Cosa sono i cookie</h2>
+      <p>I cookie sono piccoli file di testo che i siti visitati inviano al dispositivo dell'utente, dove vengono memorizzati per essere ritrasmessi agli stessi siti in occasione di visite successive.</p>
+      <h2>Cookie utilizzati da questo sito</h2>
+      <p>Questo sito non utilizza cookie di profilazione, né propri né di terze parti, e non incorpora strumenti di tracciamento pubblicitario. Possono essere utilizzati esclusivamente cookie tecnici strettamente necessari al funzionamento della piattaforma, per i quali non è richiesto il consenso dell'utente.</p>
+      <h2>Gestione dei cookie dal browser</h2>
+      <p>L'utente può gestire o eliminare i cookie tramite le impostazioni del proprio browser. La disabilitazione dei cookie tecnici potrebbe compromettere alcune funzionalità del sito.</p>
+    </section>
+  </main>
+''' + FOOTER
+
+# ============================================================ DOMANDE FREQUENTI (pagina dedicata)
+import re as _re
+_m = _re.search(r'<div class="faq__list reveal">\n(.*?)\n        </div>', pages["contatti.html"], _re.S)
+_items = _m.group(1)
+_s = _re.search(r'\n    <script type="application/ld\+json">\n(.*?)\n    </script>', pages["contatti.html"], _re.S)
+_schema = _s.group(1)
+# Lo schema FAQPage vive SOLO sulla pagina dedicata (niente duplicazioni per Google)
+pages["contatti.html"] = pages["contatti.html"].replace(_s.group(0), "")
+
+pages["domande-frequenti.html"] = head(
+    "Domande frequenti \u2014 Matteo Notario, Consulente Finanziario",
+    "Costi, diagnosi di portafoglio, remunerazione, modalit\u00e0 di lavoro: le risposte alle domande che ricevo pi\u00f9 spesso.",
+    "domande-frequenti.html"
+) + NAV + '''
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <p class="page-hero__eyebrow reveal">Domande frequenti</p>
+        <h1 class="reveal d1">Alcune domande<br>che ricevo spesso.</h1>
+        <p class="reveal d2">
+          Chiarezza prima ancora di conoscerci: costi, modalit\u00e0 di lavoro, remunerazione.
+          Se non trovi la tua risposta, scrivimi: rispondo entro 24 ore lavorative.
+        </p>
+      </div>
+    </section>
+    <section class="faq section">
+      <div class="container">
+        <div class="faq__list reveal">
+''' + _items + '''
+        </div>
+      </div>
+    </section>
+    <script type="application/ld+json">
+''' + _schema + '''
+    </script>
+''' + cta_band("Non hai trovato la risposta che cercavi?",
+               "Scrivimi direttamente: una conversazione chiarisce pi\u00f9 di qualsiasi FAQ.") + '''  </main>
 ''' + FOOTER
 
 # ---------------------------------------------------------- scrittura file

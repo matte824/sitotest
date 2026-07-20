@@ -188,6 +188,21 @@
   const form = document.getElementById("contactForm");
   const status = document.getElementById("formStatus");
   if (form) {
+    // Campo "Altro": appare e diventa obbligatorio solo se selezionato
+    const motivo = form.querySelector("#motivo");
+    const altroWrap = form.querySelector("#altroWrap");
+    const altro = form.querySelector("#altro");
+    if (motivo && altroWrap && altro) {
+      const toggleAltro = () => {
+        const on = motivo.value === "Altro";
+        altroWrap.hidden = !on;
+        altro.required = on;
+        if (!on) altro.value = "";
+      };
+      motivo.addEventListener("change", toggleAltro);
+      toggleAltro();
+    }
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!form.checkValidity()) { form.reportValidity(); return; }

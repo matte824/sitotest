@@ -33,15 +33,21 @@ if (!empty($_POST['sito_web'] ?? '')) {
 // Lettura e pulizia input
 $pulisci = fn(string $v): string => trim(str_replace(["\r", "\n"], ' ', strip_tags($v)));
 
-$nome       = $pulisci($_POST['nome'] ?? '');
-$email      = $pulisci($_POST['email'] ?? '');
-$telefono   = $pulisci($_POST['telefono'] ?? '');
-$situazione = $pulisci($_POST['situazione'] ?? '');
-$messaggio  = trim(strip_tags($_POST['messaggio'] ?? ''));
-$privacy    = isset($_POST['privacy']);
+$nome      = $pulisci($_POST['nome'] ?? '');
+$email     = $pulisci($_POST['email'] ?? '');
+$telefono  = $pulisci($_POST['telefono'] ?? '');
+$motivo    = $pulisci($_POST['motivo'] ?? '');
+$altro     = $pulisci($_POST['altro'] ?? '');
+$messaggio = trim(strip_tags($_POST['messaggio'] ?? ''));
+$privacy   = isset($_POST['privacy']);
 
-// Validazione
-if ($nome === '' || $situazione === '' || !$privacy || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+// Se il motivo è "Altro", l'argomento specificato diventa obbligatorio
+if ($motivo === 'Altro') {
+    $motivo = $altro !== '' ? 'Altro: ' . $altro : '';
+}
+
+// Validazione: tutti i campi sono obbligatori
+if ($nome === '' || $telefono === '' || $motivo === '' || $messaggio === '' || !$privacy || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(422);
     echo json_encode(['ok' => false, 'error' => 'Dati mancanti o non validi']);
     exit;
@@ -53,8 +59,8 @@ $corpo = "Nuova richiesta di contatto dal sito web\n"
        . str_repeat('-', 44) . "\n"
        . "Nome:       {$nome}\n"
        . "Email:      {$email}\n"
-       . "Telefono:   " . ($telefono ?: '—') . "\n"
-       . "Situazione: {$situazione}\n"
+       . "Telefono:   {$telefono}\n"
+       . "Motivo:     {$motivo}\n"
        . str_repeat('-', 44) . "\n"
        . "Messaggio:\n" . ($messaggio ?: '—') . "\n"
        . str_repeat('-', 44) . "\n"
